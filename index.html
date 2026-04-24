@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>yo shout out to robtop games</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2235;
+    --card-hover: #252b42;
+    --border: #2a3050;
+    --accent: #6b6b6b;
+    --accent2: #16181a;
+    --text: #e8eaf6;
+    --muted: #7a84aa;
+    --tag-bg: #252b42;
+    --sidebar-w: 220px;
+    --right-w: 195px;
+    --header-h: 54px;
+    --radius: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+  a { text-decoration: none; color: inherit; }
+
+  /* HEADER */
+  header {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 14px; z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 900; font-size: 1.2rem; white-space: nowrap;
+    color: var(--accent); flex-shrink: 0;
+  }
+  .logo .icon {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .nav-links { display: flex; gap: 4px; flex-shrink: 0; }
+  .nav-links a {
+    padding: 5px 12px; border-radius: 20px;
+    font-weight: 700; font-size: 0.78rem; color: var(--muted); transition: all 0.15s; white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-links a.active { background: var(--card); color: var(--text); }
+  .nav-links a.active { color: var(--accent); }
+  .search-wrap { flex: 1; max-width: 360px; position: relative; }
+  .search-wrap input {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 7px 36px 7px 14px; color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 0.8rem; outline: none; transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-wrap .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 0.85rem; }
+
+  /* LAYOUT */
+  .layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+
+  /* LEFT SIDEBAR */
+  .sidebar-left {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--surface); border-right: 1px solid var(--border);
+    overflow-y: auto; height: calc(100vh - var(--header-h));
+    position: sticky; top: var(--header-h); padding: 10px 8px;
+  }
+  .sidebar-section-title {
+    font-size: 0.65rem; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); padding: 8px 8px 6px;
+  }
+  .game-thumb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px; border-radius: var(--radius);
+    cursor: pointer; transition: background 0.15s; border-left: 2px solid transparent;
+  }
+  .game-thumb-item:hover { background: var(--card-hover); }
+  .game-thumb-item.active { background: var(--card); border-left-color: var(--accent); }
+  .thumb-img {
+    width: 50px; height: 36px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+  }
+  .thumb-info { overflow: hidden; }
+  .thumb-title { font-weight: 700; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+  .thumb-cat { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
+
+  /* MAIN */
+  .main { flex: 1; min-width: 0; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* FEATURED PLAYER */
+  .featured-player { background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .player-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--card); border-bottom: 1px solid var(--border); gap: 10px;
+  }
+  .player-title { font-weight: 800; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn {
+    background: var(--card-hover); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 6px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.72rem;
+    padding: 5px 11px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+  }
+  .btn:hover { background: var(--border); color: var(--text); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { opacity: 0.85; }
+  .iframe-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+  .iframe-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+  .splash-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    background: radial-gradient(ellipse at center, #1e2235 0%, #0f1117 100%);
+    cursor: pointer; transition: opacity 0.3s;
+  }
+  .splash-emoji { font-size: 5rem; filter: drop-shadow(0 0 20px rgba(79,142,247,0.5)); }
+  .splash-name { font-weight: 900; font-size: 1.4rem; color: var(--text); }
+  .splash-tag { font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 20px; background: var(--card); color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .splash-play {
+    background: var(--accent); color: #fff; border: none; border-radius: 50px;
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem;
+    padding: 12px 36px; cursor: pointer; letter-spacing: 1px; transition: transform 0.15s, opacity 0.15s;
+    box-shadow: 0 4px 20px rgba(79,142,247,0.5);
+  }
+  .splash-play:hover { transform: scale(1.05); }
+  .game-info-strip { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--border); flex-wrap: wrap; min-height: 38px; }
+  .tag { font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: var(--tag-bg); color: var(--muted); letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; }
+  .tag:hover { background: var(--accent); color: #fff; }
+  .tag.cat-tag { color: var(--accent); }
+
+  /* SECTIONS */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .section-header h2 { font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+  .see-more { font-size: 0.72rem; font-weight: 700; color: var(--accent); cursor: pointer; }
+  .see-more:hover { text-decoration: underline; }
+  .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+
+  /* GAME CARD */
+  .game-card { background: var(--card); border-radius: var(--radius); overflow: hidden; cursor: pointer; border: 1px solid transparent; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
+  .game-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 4px 20px rgba(79,142,247,0.2); }
+  .card-art { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; position: relative; overflow: hidden; }
+  .new-badge { position: absolute; top: 6px; left: 6px; background: #19b6ff; color: #fff; font-size: 0.55rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .hot-badge { position: absolute; top: 6px; left: 6px; background: #19b6ff; color: #fff; font-size: 0.55rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .card-body { padding: 8px 9px; }
+  .c-title { font-weight: 800; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+  .c-cat { font-size: 0.62rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
+
+  /* RIGHT SIDEBAR */
+  .sidebar-right {
+    width: var(--right-w); flex-shrink: 0;
+    background: var(--surface); border-left: 1px solid var(--border);
+    overflow-y: auto; height: calc(100vh - var(--header-h));
+    position: sticky; top: var(--header-h); padding: 10px;
+  }
+  .cat-list { display: flex; flex-direction: column; gap: 2px; }
+  .cat-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius); cursor: pointer; font-weight: 700; font-size: 0.78rem; color: var(--muted); transition: all 0.15s; }
+  .cat-item:hover, .cat-item.active { background: var(--card-hover); color: var(--text); }
+  .cat-item.active { color: var(--accent); }
+  .cat-emoji { font-size: 1rem; width: 22px; text-align: center; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 900px) { .sidebar-right { display: none; } :root { --sidebar-w: 180px; } }
+  @media (max-width: 640px) { .sidebar-left { display: none; } .nav-links { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="icon"> </div>Eclipse</div>
+  <nav class="nav-links">
+    <a href="#" class="active" onclick="showSection('popular',this);return false;">Videos</a>
+    <a href="#" onclick="showSection('new',this);return false;">Games</a>
+    <a href="#" onclick="showSection('all',this);return false;">All</a>
+  </nav>
+  <div class="search-wrap">
+    <input type="text" id="search-input" placeholder="Search media..." oninput="handleSearch()"/>
+    <span class="search-icon">🔍</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar-left" id="sidebar-left">
+    <div class="sidebar-section-title">All Media</div>
+    <div id="sidebar-game-list"></div>
+  </aside>
+
+  <main class="main">
+    <div class="featured-player">
+      <div class="player-topbar">
+        <span class="player-title" id="player-title">Select a media to start</span>
+        <div class="player-actions">
+          <button class="btn" onclick="reloadGame()">↺ Reload</button>
+          <button class="btn" onclick="openNewTab()">⧉ New Tab</button>
+          <button class="btn primary" onclick="openFullscreen()">⛶ Fullscreen</button>
+        </div>
+      </div>
+      <div class="iframe-wrap">
+        <div class="splash-screen" id="splash" onclick="launchFromSplash()">
+          <div class="splash-emoji" id="splash-emoji">🕹</div>
+          <div class="splash-name" id="splash-name">Pick a media</div>
+          <div class="splash-tag" id="splash-tag">Click any media to start</div>
+          <button class="splash-play">▶ START NOW</button>
+        </div>
+        <iframe id="game-iframe" allowfullscreen></iframe>
+      </div>
+      <div class="game-info-strip" id="game-tags"></div>
+    </div>
+
+    <div id="section-popular">
+      <div class="section-header">
+        <h2>Videos</h2>
+        <span class="see-more" onclick="showSection('all', null)">See all →</span>
+      </div>
+      <div class="games-grid" id="grid-popular"></div>
+    </div>
+
+    <div id="section-new" style="display:none">
+      <div class="section-header">
+        <h2>Games</h2>
+        <span class="see-more" onclick="showSection('all', null)">See all →</span>
+      </div>
+      <div class="games-grid" id="grid-new"></div>
+    </div>
+
+    <div id="section-all" style="display:none">
+      <div class="section-header">
+        <h2 id="all-title">All</h2>
+      </div>
+      <div class="games-grid" id="grid-all"></div>
+    </div>
+  </main>
+
+  <aside class="sidebar-right">
+    <div class="sidebar-section-title">Categories</div>
+    <div class="cat-list" id="cat-list"></div>
+  </aside>
+</div>
+
+<script>
+const GAMES = [
+  { id:1,  title:"Geometry Dash (PenguinMod)", emoji:"⚡", bg:"#006aff", cat:"games",   tags:["games"], hot:false, isNew:true, url:"https://jasonschannelcap.github.io/gd-penguinmod/"},
+  { id:2,  title:"The Amazing Digital Circus - Full Collection", emoji:"🎪", bg:"#006aff", cat:"videos",   tags:["videos"], hot:true, isNew:false, url:"https://jasonschannelcap.github.io/gd-penguinmod/"},
+]
+
+const CATEGORIES = [
+  { label:"All Media", emoji:"", value:"all"      },
+  { label:"Videos",    emoji:"👾", value:"videos"   },
+  { label:"Games",    emoji:"👾",  value:"games"   },
+];
+
+let currentGame = null;
+let splashPending = null;
+
+function renderSidebar(games) {
+  document.getElementById("sidebar-game-list").innerHTML = games.map(g => `
+    <div class="game-thumb-item${currentGame?.id===g.id?' active':''}" onclick="selectGame(${g.id})" id="sb-${g.id}">
+      <div class="thumb-img" style="background:${g.bg}">${g.emoji}</div>
+      <div class="thumb-info">
+        <div class="thumb-title">${g.title}</div>
+        <div class="thumb-cat">${g.cat}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGrid(id, games) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = games.length ? games.map(g => `
+    <div class="game-card" onclick="selectGame(${g.id})">
+      <div class="card-art" style="background:${g.bg}">
+        ${g.emoji}
+        ${g.isNew ? '<span class="new-badge">NEW</span>' : g.hot ? '<span class="hot-badge">HOT</span>' : ''}
+      </div>
+      <div class="card-body">
+        <div class="c-title">${g.title}</div>
+        <div class="c-cat">${g.cat}</div>
+      </div>
+    </div>`).join('') :
+    '<p style="color:var(--muted);grid-column:1/-1;padding:10px 0;font-size:.8rem;">No games found.</p>';
+}
+
+function renderCategories() {
+  document.getElementById("cat-list").innerHTML = CATEGORIES.map(c => `
+    <div class="cat-item${c.value==='all'?' active':''}" onclick="filterCat('${c.value}',this)" id="cat-${c.value}">
+      <span class="cat-emoji">${c.emoji}</span>${c.label}
+    </div>`).join('');
+}
+
+function selectGame(id) {
+  const g = GAMES.find(x => x.id === id);
+  if (!g) return;
+  currentGame = g;
+  document.querySelectorAll(".game-thumb-item").forEach(e => e.classList.remove("active"));
+  document.getElementById(`sb-${id}`)?.classList.add("active");
+  document.getElementById("player-title").textContent = g.title;
+  document.getElementById("game-tags").innerHTML =
+    `<span class="tag cat-tag">${g.cat}</span>` +
+    g.tags.map(t=>`<span class="tag">${t}</span>`).join('') +
+    `<span style="margin-left:auto;font-size:.65rem;color:var(--muted);font-weight:700;">↗ Opens in new tab if blocked (Not Garunteed)</span>`;
+  splashPending = g;
+  document.getElementById("splash-emoji").textContent = g.emoji;
+  document.getElementById("splash-name").textContent = g.title;
+  document.getElementById("splash-tag").textContent = g.cat.toUpperCase();
+  const splash = document.getElementById("splash");
+  splash.style.cssText = "display:flex;opacity:1;";
+  document.getElementById("game-iframe").src = "";
+  document.querySelector(".featured-player").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function launchFromSplash() {
+  if (!splashPending) return;
+  const g = splashPending;
+  const splash = document.getElementById("splash");
+  splash.style.opacity = "0";
+  setTimeout(()=>{ splash.style.display="none"; },300);
+  document.getElementById("game-iframe").src = g.url;
+}
+
+function reloadGame() {
+  if (currentGame) { document.getElementById("game-iframe").src = currentGame.url; }
+}
+
+function openNewTab() {
+  if (currentGame) window.open(currentGame.url,"_blank");
+}
+
+function openFullscreen() {
+  const f = document.getElementById("game-iframe");
+  (f.requestFullscreen||f.webkitRequestFullscreen||f.mozRequestFullScreen).call(f);
+}
+
+function filterCat(value, btn) {
+  document.querySelectorAll(".cat-item").forEach(e=>e.classList.remove("active"));
+  (btn || document.getElementById(`cat-${value}`))?.classList.add("active");
+  const list = value==="all" ? GAMES : GAMES.filter(g=>g.cat===value);
+  renderSidebar(list);
+  const info = CATEGORIES.find(c=>c.value===value);
+  document.getElementById("all-title").textContent = info ? `${info.emoji} ${info.label}` : "All Media";
+  document.getElementById("section-popular").style.display="none";
+  document.getElementById("section-new").style.display="none";
+  document.getElementById("section-all").style.display="block";
+  renderGrid("grid-all", list);
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+}
+
+function showSection(type, btn) {
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+  btn?.classList.add("active");
+  document.getElementById("section-popular").style.display = type==="hot" ? "block" : "none";
+  document.getElementById("section-new").style.display    = type==="new"      ? "block" : "none";
+  document.getElementById("section-all").style.display    = type==="all"      ? "block" : "none";
+  if (type==="all") {
+    document.getElementById("all-title").textContent="All Media";
+    renderGrid("grid-all", GAMES);
+    renderSidebar(GAMES);
+  }
+}
+
+function handleSearch() {
+  const q = document.getElementById("search-input").value.toLowerCase().trim();
+  const results = q ? GAMES.filter(g=>g.title.toLowerCase().includes(q)||g.cat.toLowerCase().includes(q)) : GAMES;
+  renderSidebar(results);
+  document.getElementById("section-popular").style.display="none";
+  document.getElementById("section-new").style.display="none";
+  document.getElementById("section-all").style.display="block";
+  document.getElementById("all-title").textContent = q ? `🔍 Results for "${q}"` : "🕹 All Games";
+  renderGrid("grid-all", results);
+}
+
+// INIT
+renderSidebar(GAMES);
+renderCategories();
+renderGrid("grid-popular", GAMES.filter(g=>g.hot));
+renderGrid("grid-new", GAMES.filter(g=>g.isNew));
+selectGame(GAMES[0].id);
+</script>
+</body>
+</html>
