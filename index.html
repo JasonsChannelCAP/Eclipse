@@ -279,7 +279,7 @@
 
   <aside class="sidebar-right">
     <div class="sidebar-section-title">😈 Demon List</div>
-      <p id="demon-empty" style="color:var(--muted);font-size:0.7rem;padding:8px 4px;text-align:center;">No demons yet.<br>Click Edit to add some!</p>
+      <p id="demon-empty" style="color:var(--muted);font-size:0.7rem;padding:8px 4px;text-align:center;">No demons yet.<br>boo</p>
     </div>
   </aside>
 
@@ -443,8 +443,8 @@ function handleSearch() {
 // DEMON LIST
 // Edit entries here directly, or click "Edit Demon List" in the sidebar
 const DEMONS = [
-  // { name: "Bloodbath", desc: "Extreme demon by Riot", img: "https://example.com/image.png" },
-  // { name: "Tartarus",  desc: "Hardest level ever",   img: "" },
+  { name: "Bloodbath", desc: "Extreme demon by Riot", img: "https://example.com/image.png" },
+  { name: "Tartarus",  desc: "Hardest level ever",   img: "" },
 ];
 
 let demonList = DEMONS.map((d, i) => ({ ...d, id: i + 1 }));
