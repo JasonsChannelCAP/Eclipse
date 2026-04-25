@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>yo shout out to robtop games</title>
+<link rel="icon" type="image/png" href="/images/favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet"/>
 <style>
   :root {
@@ -18,19 +19,19 @@
     --muted: #7a84aa;
     --tag-bg: #252b42;
     --sidebar-w: 220px;
-    --right-w: 195px;
+    --right-w: 220px;
     --header-h: 54px;
     --radius: 8px;
     --shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+  body { font-family: 'Lilita-One', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
   a { text-decoration: none; color: inherit; }
 
   /* HEADER */
   header {
     position: fixed; top: 0; left: 0; right: 0;
-    height: var(--header-h);
+    height: var(--header-h);+
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center;
@@ -166,6 +167,39 @@
   .cat-item.active { color: var(--accent); }
   .cat-emoji { font-size: 1rem; width: 22px; text-align: center; }
 
+  /* DEMON LIST */
+  .demon-list { display: flex; flex-direction: column; gap: 6px; }
+  .demon-entry {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: border-color 0.15s;
+  }
+  .demon-entry:hover { border-color: var(--accent); }
+  .demon-img-wrap { width: 100%; aspect-ratio: 16/9; background: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .demon-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .demon-img-placeholder { font-size: 2rem; color: var(--muted); }
+  .demon-text { padding: 6px 8px; font-size: 0.72rem; color: var(--text); font-weight: 700; line-height: 1.4; word-break: break-word; }
+  .demon-subtext { padding: 0 8px 6px; font-size: 0.62rem; color: var(--muted); line-height: 1.4; word-break: break-word; }
+  .demon-remove { width: 100%; background: none; border: none; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.6rem; padding: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .demon-remove:hover { background: #ff4444; color: #fff; }
+
+  /* ADD DEMON FORM */
+  .add-demon-form { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .add-demon-form input, .add-demon-form textarea {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 6px 8px; font-size: 0.72rem; font-family: inherit;
+    outline: none; transition: border-color 0.2s; resize: none;
+  }
+  .add-demon-form input:focus, .add-demon-form textarea:focus { border-color: var(--accent); }
+  .add-demon-form input::placeholder, .add-demon-form textarea::placeholder { color: var(--muted); }
+  .add-demon-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 6px;
+    padding: 7px; font-size: 0.72rem; font-weight: 800; font-family: inherit;
+    cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.5px;
+  }
+  .add-demon-btn:hover { opacity: 0.85; }
+  .img-url-toggle { font-size: 0.62rem; color: var(--accent); cursor: pointer; text-align: center; }
+  .img-url-toggle:hover { text-decoration: underline; }
+
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -244,15 +278,41 @@
   </main>
 
   <aside class="sidebar-right">
-    <div class="sidebar-section-title">Categories</div>
-    <div class="cat-list" id="cat-list"></div>
+    <div class="sidebar-section-title">😈 Demon List</div>
+      <p id="demon-empty" style="color:var(--muted);font-size:0.7rem;padding:8px 4px;text-align:center;">No demons yet.<br>Click Edit to add some!</p>
+    </div>
   </aside>
+
+  <!-- DEMON EDITOR MODAL -->
+  <div id="demon-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;width:min(700px,95vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.7);">
+      <!-- Modal header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
+        <span style="font-weight:900;font-size:0.95rem;">😈 Edit Demon List — <span style="color:var(--muted);font-weight:600;font-size:0.8rem;">Edit the DEMONS array below, then click Apply</span></span>
+        <button onclick="closeDemonEditor()" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:0 4px;">✕</button>
+      </div>
+      <!-- Code hint -->
+      <div style="padding:8px 16px;background:var(--card);border-bottom:1px solid var(--border);font-size:0.68rem;color:var(--muted);line-height:1.6;">
+        Each entry: <code style="color:#7ec8e3;">{ name: "Title", desc: "Text", img: "https://..." }</code> — <code style="color:#7ec8e3;">img</code> and <code style="color:#7ec8e3;">desc</code> are optional.
+      </div>
+      <!-- Editor -->
+      <textarea id="demon-code-editor" spellcheck="false" style="flex:1;min-height:320px;background:#0d1117;color:#c9d1d9;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.6;padding:14px 16px;border:none;outline:none;resize:none;overflow-y:auto;"></textarea>
+      <!-- Error bar -->
+      <div id="demon-error" style="display:none;padding:7px 16px;background:#3d1010;color:#ff6b6b;font-size:0.72rem;border-top:1px solid #5c1a1a;"></div>
+      <!-- Footer buttons -->
+      <div style="display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border);">
+        <button class="add-demon-btn" onclick="applyDemonCode()" style="flex:1;">✅ Apply Changes</button>
+        <button class="btn" onclick="closeDemonEditor()" style="flex:0 0 auto;">Cancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 const GAMES = [
   { id:1,  title:"Geometry Dash (PenguinMod)", emoji:"⚡", bg:"#006aff", cat:"games",   tags:["games"], hot:false, isNew:true, url:"https://jasonschannelcap.github.io/gd-penguinmod/"},
   { id:2,  title:"The Amazing Digital Circus - Full Collection", emoji:"🎪", bg:"#006aff", cat:"videos",   tags:["videos"], hot:true, isNew:false, url:"https://jasonschannelcap.github.io/gd-penguinmod/"},
+  { id:3,  title:"Snake", emoji:"🐍", bg:"#006aff", cat:"games",   tags:["games"], hot:false, isNew:true, url:"https://googlesnakemods.com/v/current/"},
 ]
 
 const CATEGORIES = [
@@ -380,12 +440,83 @@ function handleSearch() {
   renderGrid("grid-all", results);
 }
 
+// DEMON LIST
+// Edit entries here directly, or click "Edit Demon List" in the sidebar
+const DEMONS = [
+  // { name: "Bloodbath", desc: "Extreme demon by Riot", img: "https://example.com/image.png" },
+  // { name: "Tartarus",  desc: "Hardest level ever",   img: "" },
+];
+
+let demonList = DEMONS.map((d, i) => ({ ...d, id: i + 1 }));
+
+function renderDemonList() {
+  const list = document.getElementById('demon-list');
+  if (!demonList.length) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:0.7rem;padding:8px 4px;text-align:center;">No demons yet.<br>Click Edit to add some!</p>';
+    return;
+  }
+  list.innerHTML = demonList.map(d => `
+    <div class="demon-entry">
+      ${d.img ? `<div class="demon-img-wrap"><img src="${d.img}" alt="${d.name}" onerror="this.parentElement.style.display='none'"/></div>` : ''}
+      <div class="demon-text">${d.name}</div>
+      ${d.desc ? `<div class="demon-subtext">${d.desc}</div>` : ''}
+    </div>`).join('');
+}
+
+function openDemonEditor() {
+  // Build editable array text from current demonList
+  const entries = demonList.map(d =>
+    `  { name: ${JSON.stringify(d.name)}, desc: ${JSON.stringify(d.desc||'')}, img: ${JSON.stringify(d.img||'')} }`
+  );
+  // If empty, show commented examples
+  const body = entries.length
+    ? entries.join(',\n')
+    : `  // { name: "Bloodbath", desc: "Extreme demon by Riot", img: "https://..." },\n  // { name: "Tartarus",  desc: "Hardest level", img: "" }`;
+  document.getElementById('demon-code-editor').value = `[\n${body}\n]`;
+  document.getElementById('demon-error').style.display = 'none';
+  const modal = document.getElementById('demon-modal');
+  modal.style.display = 'flex';
+}
+
+function closeDemonEditor() {
+  document.getElementById('demon-modal').style.display = 'none';
+}
+
+function applyDemonCode() {
+  const raw = document.getElementById('demon-code-editor').value.trim();
+  const errBar = document.getElementById('demon-error');
+  try {
+    // Use Function constructor to safely evaluate JS array literal
+    const parsed = (new Function('return ' + raw))();
+    if (!Array.isArray(parsed)) throw new Error('Must be an array [ ... ]');
+    demonList = parsed
+      .filter(d => d && typeof d === 'object')
+      .map((d, i) => ({
+        id: i + 1,
+        name: String(d.name || 'Unnamed'),
+        desc: String(d.desc || ''),
+        img:  String(d.img  || '')
+      }));
+    errBar.style.display = 'none';
+    closeDemonEditor();
+    renderDemonList();
+  } catch(e) {
+    errBar.style.display = 'block';
+    errBar.textContent = '⚠ ' + e.message;
+  }
+}
+
+// Close modal on backdrop click
+document.getElementById('demon-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDemonEditor();
+});
+
 // INIT
 renderSidebar(GAMES);
-renderCategories();
 renderGrid("grid-popular", GAMES.filter(g=>g.hot));
 renderGrid("grid-new", GAMES.filter(g=>g.isNew));
 selectGame(GAMES[0].id);
+renderDemonList();
 </script>
 </body>
 </html>
